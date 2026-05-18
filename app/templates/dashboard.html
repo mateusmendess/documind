@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="db-page">
+
+    <div class="db-hero">
+        <h1>Meus Documentos</h1>
+        <p>Faça upload de um PDF para começar a conversar com ele.</p>
+    </div>
+
+    <div class="db-actions">
+        <a href="#" class="tf-btn-primary">
+            + Novo PDF
+        </a>
+    </div>
+
+    <div class="db-card">
+        <div class="db-card-title">
+            <span class="db-card-icon">📄</span>
+            Documentos enviados
+        </div>
+
+        <div class="db-empty">
+            Nenhum documento enviado ainda.<br>
+            Clique em "Novo PDF" para começar!
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

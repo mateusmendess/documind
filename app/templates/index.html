@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="home-page">
+
+    <div class="home-left">
+        <div class="home-badge">IA PARA DOCUMENTOS</div>
+
+        <h1 class="home-title">
+            Converse com<br>
+            seus documentos<br>
+            <span class="home-title-accent">usando IA</span>
+        </h1>
+
+        <p class="home-sub">
+            Faça upload de qualquer PDF e faça perguntas diretamente
+            sobre o conteúdo. Respostas precisas, baseadas no documento.
+        </p>
+
+        <div class="home-buttons">
+            <a href="{{ url_for('main.register') }}" class="tf-btn-primary home-btn">
+                Começar Agora →
+            </a>
+            <a href="{{ url_for('main.login') }}" class="home-btn-sec">
+                Já tenho conta
+            </a>
+        </div>
+
+        <div class="home-trust">
+            <span>✓ Gratuito para começar</span>
+            <span>✓ Sem cartão de crédito</span>
+        </div>
+    </div>
+
+    <div class="home-right">
+
+        <div class="home-demo-card">
+            <div class="home-demo-header">
+                <span class="home-demo-icon">📄</span>
+                <span class="home-demo-filename">contrato.pdf</span>
+                <span class="home-demo-badge">Processado</span>
+            </div>
+            <div class="home-demo-question">
+                <p class="home-demo-label">Você perguntou:</p>
+                <p class="home-demo-text">Qual é o prazo de entrega do contrato?</p>
+            </div>
+            <div class="home-demo-answer">
+                <p class="home-demo-label">DocuMind respondeu:</p>
+                <p class="home-demo-answer-text">Conforme a cláusula 4.2, o prazo de entrega é de 30 dias úteis após a assinatura.</p>
+            </div>
+        </div>
+
+        <div class="home-features-grid">
+            <div class="home-feature-card">
+                <span class="home-feature-icon">📤</span>
+                <p class="home-feature-title">Upload fácil</p>
+                <p class="home-feature-sub">Arraste ou clique</p>
+            </div>
+            <div class="home-feature-card">
+                <span class="home-feature-icon">💬</span>
+                <p class="home-feature-title">Chat inteligente</p>
+                <p class="home-feature-sub">Respostas precisas</p>
+            </div>
+            <div class="home-feature-card">
+                <span class="home-feature-icon">🕘</span>
+                <p class="home-feature-title">Histórico salvo</p>
+                <p class="home-feature-sub">Conversas anteriores</p>
+            </div>
+            <div class="home-feature-card">
+                <span class="home-feature-icon">🔒</span>
+                <p class="home-feature-title">Seguro</p>
+                <p class="home-feature-sub">Seus dados protegidos</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

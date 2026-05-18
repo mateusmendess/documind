@@ -1,0 +1,14 @@
+flask
+flask-sqlalchemy
+flask-login
+flask-bcrypt
+flask-mail
+python-dotenv
+pg8000
+gunicorn
+pymupdf
+langchain
+langchain-groq
+langchain-community
+chromadb
+python-dotenv
