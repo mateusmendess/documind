@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="chat-container">
+  
+  <div class="chat-header">
+    <i class="ti ti-file-text"></i>
+    <span class="chat-filename">{{ doc.filename }}</span>
+    <span class="chat-badge">Pronto</span>
+  </div>
+
+  <div class="chat-messages" id="chatMessages">
+    {% if not messages %}
+    <div class="chat-empty">
+      <i class="ti ti-message-question"></i>
+      <p>Faça uma pergunta sobre o documento</p>
+    </div>
+    {% endif %}
+
+    {% if question and answer %}
+  <div class="chat-bubble user-bubble">
+    <p>{{ question }}</p>
+  </div>
+  <div class="chat-bubble-wrapper">
+    <div class="chat-avatar">
+      <i class="ti ti-robot"></i>
+    </div>
+    <div class="chat-bubble ai-bubble">
+      <p>{{ answer }}</p>
+    </div>
+  </div>
+{% endif %}
+  </div>
+
+  <div class="chat-input-area">
+    <form method="POST">
+      <input type="text" name="question" placeholder="Digite sua pergunta..." autocomplete="off" required />
+      <button type="submit"><i class="ti ti-send"></i></button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

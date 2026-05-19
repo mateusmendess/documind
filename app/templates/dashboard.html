@@ -28,7 +28,10 @@
             <span class="doc-icon">📄</span>
             <span class="doc-name">{{ doc.filename }}</span>
             <span class="doc-date">{{ doc.created_at.strftime('%d/%m/%Y') }}</span>
-          </li>
+            <a href="{{ url_for('main.chat', doc_id=doc.id) }}" class="tf-btn-primary" style="font-size:13px; padding:4px 12px;">
+                <i class="ti ti-message"></i> Chat
+            </a>
+        </li>
         {% endfor %}
       </ul>
     {% else %}

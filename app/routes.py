@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from .models import User, Document
 from .extensions import db, bcrypt
 from .pdf_service import extract_text_from_pdf
+from .ai_service import ask_question
 
 main = Blueprint("main", __name__)
 
@@ -110,6 +111,19 @@ def upload():
 
     return render_template("upload.html")
 
+@main.route("/chat/<int:doc_id>", methods=["GET", "POST"])
+@login_required
+def chat(doc_id):
+    doc = Document.query.filter_by(id=doc_id, user_id=current_user.id).first_or_404()
+    question = None
+    answer = None
+
+    if request.method == "POST":
+        question = request.form.get("question")
+        if question:
+            answer = ask_question(doc.extracted_text, question)
+
+    return render_template("chat.html", doc=doc, question=question, answer=answer)
 
 @main.route("/logout")
 @login_required
