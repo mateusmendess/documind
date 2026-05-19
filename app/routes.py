@@ -4,6 +4,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from .models import User, Document
 from .extensions import db, bcrypt
+from .pdf_service import extract_text_from_pdf
 
 main = Blueprint("main", __name__)
 
@@ -92,9 +93,13 @@ def upload():
 
         file.save(filepath)
 
+        # Extrai o texto logo após salvar o arquivo
+        extracted_text = extract_text_from_pdf(filepath)
+
         doc = Document(
             filename=filename,
             filepath=filepath,
+            extracted_text=extracted_text,
             user_id=current_user.id
         )
         db.session.add(doc)

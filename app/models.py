@@ -24,6 +24,7 @@ class Document(db.Model):
     id         = db.Column(db.Integer, primary_key=True)
     filename   = db.Column(db.String(255), nullable=False)
     filepath   = db.Column(db.String(500), nullable=False)
+    extracted_text = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id    = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
