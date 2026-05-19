@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Upload de PDF — DocuMind{% endblock %}
+
+{% block content %}
+<div class="upload-container">
+  <div class="upload-card">
+
+    <div class="upload-header">
+      <h1>Enviar documento</h1>
+      <p>Faça upload de um PDF para começar a conversar com ele</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data" class="upload-form">
+      <div class="drop-area" id="dropArea">
+        <div class="drop-icon">📄</div>
+        <p class="drop-text">Arraste seu PDF aqui</p>
+        <p class="drop-sub">ou</p>
+        <label for="file" class="btn-select">Selecionar arquivo</label>
+        <input type="file" id="file" name="file" accept=".pdf" hidden>
+        <p class="file-name" id="fileName">Nenhum arquivo selecionado</p>
+      </div>
+
+      <button type="submit" class="btn-upload">Enviar PDF</button>
+    </form>
+
+    <a href="{{ url_for('main.dashboard') }}" class="back-link">← Voltar ao dashboard</a>
+
+  </div>
+</div>
+{% endblock %}

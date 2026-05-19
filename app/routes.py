@@ -1,9 +1,16 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+import os
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from .models import User
+from werkzeug.utils import secure_filename
+from .models import User, Document
 from .extensions import db, bcrypt
 
 main = Blueprint("main", __name__)
+
+ALLOWED_EXTENSIONS = {"pdf"}
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @main.route("/")
@@ -57,7 +64,46 @@ def login():
 @main.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    documents = Document.query.filter_by(user_id=current_user.id).order_by(Document.created_at.desc()).all()
+    return render_template("dashboard.html", documents=documents)
+
+
+@main.route("/upload", methods=["GET", "POST"])
+@login_required
+def upload():
+    if request.method == "POST":
+        file = request.files.get("file")
+
+        if not file or file.filename == "":
+            flash("Nenhum arquivo selecionado.", "error")
+            return redirect(url_for("main.upload"))
+
+        if not allowed_file(file.filename):
+            flash("Apenas arquivos PDF são permitidos.", "error")
+            return redirect(url_for("main.upload"))
+
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
+
+        existing = Document.query.filter_by(filename=filename, user_id=current_user.id).first()
+        if existing:
+            flash("Você já enviou um documento com esse nome.", "error")
+            return redirect(url_for("main.upload"))
+
+        file.save(filepath)
+
+        doc = Document(
+            filename=filename,
+            filepath=filepath,
+            user_id=current_user.id
+        )
+        db.session.add(doc)
+        db.session.commit()
+
+        flash("PDF enviado com sucesso!", "success")
+        return redirect(url_for("main.dashboard"))
+
+    return render_template("upload.html")
 
 
 @main.route("/logout")

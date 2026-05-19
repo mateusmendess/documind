@@ -4,29 +4,41 @@
 
 <div class="db-page">
 
-    <div class="db-hero">
-        <h1>Meus Documentos</h1>
-        <p>Faça upload de um PDF para começar a conversar com ele.</p>
+  <div class="db-hero">
+    <h1>Meus Documentos</h1>
+    <p>Faça upload de um PDF para começar a conversar com ele.</p>
+  </div>
+
+  <div class="db-actions">
+    <a href="{{ url_for('main.upload') }}" class="tf-btn-primary">
+      + Novo PDF
+    </a>
+  </div>
+
+  <div class="db-card">
+    <div class="db-card-title">
+      <span class="db-card-icon">📄</span>
+      Documentos enviados
     </div>
 
-    <div class="db-actions">
-        <a href="#" class="tf-btn-primary">
-            + Novo PDF
-        </a>
-    </div>
+    {% if documents %}
+      <ul class="doc-list">
+        {% for doc in documents %}
+          <li class="doc-item">
+            <span class="doc-icon">📄</span>
+            <span class="doc-name">{{ doc.filename }}</span>
+            <span class="doc-date">{{ doc.created_at.strftime('%d/%m/%Y') }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="db-empty">
+        Nenhum documento enviado ainda.<br>
+        Clique em "Novo PDF" para começar!
+      </div>
+    {% endif %}
 
-    <div class="db-card">
-        <div class="db-card-title">
-            <span class="db-card-icon">📄</span>
-            Documentos enviados
-        </div>
-
-        <div class="db-empty">
-            Nenhum documento enviado ainda.<br>
-            Clique em "Novo PDF" para começar!
-        </div>
-
-    </div>
+  </div>
 
 </div>
 

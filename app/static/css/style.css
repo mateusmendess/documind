@@ -498,3 +498,152 @@ body {
     font-weight: 600;
     line-height: 1.8;
 }
+
+/* ── Upload ── */
+.upload-container {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.upload-card {
+  background: #161b27;
+  border: 1px solid #2d3748;
+  border-radius: 12px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.upload-header h1 {
+  font-size: 1.5rem;
+  color: #f1f5f9;
+  margin-bottom: 0.25rem;
+}
+
+.upload-header p {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.drop-area {
+  border: 2px dashed #2d3748;
+  border-radius: 10px;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.drop-area:hover,
+.drop-area.dragover {
+  border-color: #10b981;
+}
+
+.drop-icon {
+  font-size: 2.5rem;
+}
+
+.drop-text {
+  color: #cbd5e1;
+  font-size: 1rem;
+}
+
+.drop-sub {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.btn-select {
+  background: #1e2535;
+  color: #10b981;
+  border: 1px solid #10b981;
+  padding: 0.4rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-select:hover {
+  background: #0d2e22;
+}
+
+.file-name {
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+.btn-upload {
+  width: 100%;
+  background: #10b981;
+  color: #0f1117;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-upload:hover {
+  background: #059669;
+}
+
+.back-link {
+  color: #6b7280;
+  font-size: 0.85rem;
+  text-decoration: none;
+  text-align: center;
+}
+
+.back-link:hover {
+  color: #10b981;
+}
+
+/* ── Lista de documentos ── */
+.doc-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.doc-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #1e2535;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+
+.doc-item:hover {
+  border-color: #10b981;
+}
+
+.doc-icon {
+  font-size: 1.2rem;
+}
+
+.doc-name {
+  flex: 1;
+  color: #f1f5f9;
+  font-size: 0.95rem;
+}
+
+.doc-date {
+  color: #6b7280;
+  font-size: 0.8rem;
+}
