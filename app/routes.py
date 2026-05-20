@@ -146,6 +146,15 @@ def delete_conversation(doc_id, conv_id):
     db.session.commit()
     return redirect(url_for("main.chat", doc_id=doc_id))
 
+@main.route("/document/<int:doc_id>/delete", methods=["POST"])
+@login_required
+def delete_document(doc_id):
+    doc = Document.query.filter_by(id=doc_id, user_id=current_user.id).first_or_404()
+    db.session.delete(doc)
+    db.session.commit()
+    flash("Documento excluído com sucesso.", "success")
+    return redirect(url_for("main.dashboard"))
+
 @main.route("/logout")
 @login_required
 def logout():

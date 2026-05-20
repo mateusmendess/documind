@@ -44,6 +44,35 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// ── Modal de exclusão de documento ──
+document.addEventListener('DOMContentLoaded', () => {
+  const modal      = document.getElementById('deleteModal');
+  const deleteForm = document.getElementById('deleteForm');
+  const modalName  = document.getElementById('modalDocName');
+  const cancelBtn  = document.getElementById('modalCancel');
+
+  if (!modal) return;
+
+  document.querySelectorAll('.btn-delete-doc').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const docId   = btn.dataset.docId;
+      const docName = btn.dataset.docName;
+
+      modalName.textContent  = docName;
+      deleteForm.action      = `/document/${docId}/delete`;
+      modal.style.display    = 'flex';
+    });
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.style.display = 'none';
+  });
+});
+
 // ── Upload ──
 const fileInput = document.getElementById("file");
 const fileName  = document.getElementById("fileName");

@@ -5,44 +5,77 @@
 <div class="db-page">
 
   <div class="db-hero">
-    <h1>Meus Documentos</h1>
-    <p>Faça upload de um PDF para começar a conversar com ele.</p>
-  </div>
-
-  <div class="db-actions">
+    <div>
+      <h1>Meus documentos</h1>
+      <p>{{ documents|length }} documento{{ 's' if documents|length != 1 else '' }} enviado{{ 's' if documents|length != 1 else '' }}</p>
+    </div>
     <a href="{{ url_for('main.upload') }}" class="tf-btn-primary">
-      + Novo PDF
+      <i class="ti ti-plus"></i> Novo PDF
     </a>
   </div>
 
-  <div class="db-card">
-    <div class="db-card-title">
-      <span class="db-card-icon">📄</span>
-      Documentos enviados
+  {% if documents %}
+    <div class="doc-grid">
+      {% for doc in documents %}
+        <div class="doc-card">
+
+          <div class="doc-icon-wrap">
+            <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
+          </div>
+
+          <div class="doc-info">
+            <div class="doc-name">{{ doc.filename }}</div>
+            <div class="doc-meta">
+              <i class="ti ti-calendar" aria-hidden="true"></i>
+              {{ doc.created_at.strftime('%d/%m/%Y') }}
+              &nbsp;·&nbsp;
+              <i class="ti ti-message" aria-hidden="true"></i>
+              {{ doc.conversations|length }} conversa{{ 's' if doc.conversations|length != 1 else '' }}
+            </div>
+          </div>
+
+          <div class="doc-actions">
+            <a href="{{ url_for('main.chat', doc_id=doc.id) }}" class="btn-chat">
+              <i class="ti ti-message"></i> Chat
+            </a>
+            <button class="btn-delete-doc"
+                    data-doc-id="{{ doc.id }}"
+                    data-doc-name="{{ doc.filename }}"
+                    aria-label="Excluir documento">
+              <i class="ti ti-trash"></i>
+            </button>
+          </div>
+
+        </div>
+      {% endfor %}
     </div>
 
-    {% if documents %}
-      <ul class="doc-list">
-        {% for doc in documents %}
-          <li class="doc-item">
-            <span class="doc-icon">📄</span>
-            <span class="doc-name">{{ doc.filename }}</span>
-            <span class="doc-date">{{ doc.created_at.strftime('%d/%m/%Y') }}</span>
-            <a href="{{ url_for('main.chat', doc_id=doc.id) }}" class="tf-btn-primary" style="font-size:13px; padding:4px 12px;">
-                <i class="ti ti-message"></i> Chat
-            </a>
-        </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <div class="db-empty">
-        Nenhum documento enviado ainda.<br>
-        Clique em "Novo PDF" para começar!
-      </div>
-    {% endif %}
+  {% else %}
+    <div class="db-empty">
+      Nenhum documento enviado ainda.<br>
+      Clique em "Novo PDF" para começar!
+    </div>
+  {% endif %}
 
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<div id="deleteModal" class="modal-backdrop" style="display:none">
+  <div class="modal-box">
+    <p class="modal-title">Excluir documento?</p>
+    <p class="modal-sub">
+      Todas as conversas de <strong id="modalDocName"></strong> serão apagadas.<br>
+      Essa ação não pode ser desfeita.
+    </p>
+    <div class="modal-actions">
+      <button id="modalCancel" class="btn-modal-cancel">Cancelar</button>
+      <form id="deleteForm" method="POST" action="">
+        <button type="submit" class="btn-modal-confirm">
+          <i class="ti ti-trash"></i> Excluir
+        </button>
+      </form>
+    </div>
   </div>
-
 </div>
 
 {% endblock %}
