@@ -33,8 +33,9 @@ def register():
         new_user = User(name=name, email=email, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        flash("Conta criada com sucesso! Faça login.", "success")
-        return redirect(url_for("main.login"))
+        login_user(new_user)
+        flash("Conta criada com sucesso! Bem-vindo ao DocuMind.", "success")
+        return redirect(url_for("main.dashboard"))
     return render_template("register.html")
 
 @main.route("/login", methods=["GET", "POST"])
