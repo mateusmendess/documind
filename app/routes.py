@@ -2,11 +2,11 @@ import os
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
-from .models import User, Document, Message
+from .models import User, Document, Conversation, Message
 from .extensions import db, bcrypt
 from .pdf_service import extract_text_from_pdf
 from .ai_service import ask_question
-from .rag_service import index_document, search_chunks 
+from .rag_service import index_document, search_chunks
 
 main = Blueprint("main", __name__)
 ALLOWED_EXTENSIONS = {"pdf"}
@@ -83,46 +83,66 @@ def upload():
         )
         db.session.add(doc)
         db.session.commit()
-
-        # ← RAG: indexa o documento recém-criado no ChromaDB
         index_document(doc.id, extracted_text)
-
         flash("PDF enviado e indexado com sucesso!", "success")
         return redirect(url_for("main.dashboard"))
     return render_template("upload.html")
 
-@main.route("/chat/<int:doc_id>", methods=["GET", "POST"])
+@main.route("/chat/<int:doc_id>")
 @login_required
 def chat(doc_id):
     doc = Document.query.filter_by(id=doc_id, user_id=current_user.id).first_or_404()
-    
-    # Busca histórico ordenado por data
-    history = Message.query.filter_by(document_id=doc_id).order_by(Message.created_at.asc()).all()
-    
+    # Pega a conversa mais recente ou cria uma nova
+    conv = Conversation.query.filter_by(document_id=doc_id).order_by(Conversation.created_at.desc()).first()
+    if not conv:
+        conv = Conversation(title="Nova conversa", document_id=doc_id)
+        db.session.add(conv)
+        db.session.commit()
+    return redirect(url_for("main.chat_conversation", doc_id=doc_id, conv_id=conv.id))
+
+@main.route("/chat/<int:doc_id>/<int:conv_id>", methods=["GET", "POST"])
+@login_required
+def chat_conversation(doc_id, conv_id):
+    doc  = Document.query.filter_by(id=doc_id, user_id=current_user.id).first_or_404()
+    conv = Conversation.query.filter_by(id=conv_id, document_id=doc_id).first_or_404()
+    history = Message.query.filter_by(conversation_id=conv_id).order_by(Message.created_at.asc()).all()
+    conversations = Conversation.query.filter_by(document_id=doc_id).order_by(Conversation.created_at.desc()).all()
+
     if request.method == "POST":
         question = request.form.get("question")
         if question:
+            # Gera título automático a partir da primeira pergunta
+            if not history:
+                conv.title = question[:60] + ("..." if len(question) > 60 else "")
+                db.session.commit()
             context = search_chunks(doc.id, question)
             answer = ask_question(context, question, history)
-            
-            # Salva a nova mensagem no banco
             new_message = Message(
                 question=question,
                 answer=answer,
-                document_id=doc_id
+                conversation_id=conv_id
             )
             db.session.add(new_message)
             db.session.commit()
-            
-            return redirect(url_for("main.chat", doc_id=doc_id))
-    
-    return render_template("chat.html", doc=doc, history=history)
+            return redirect(url_for("main.chat_conversation", doc_id=doc_id, conv_id=conv_id))
 
-@main.route("/chat/<int:doc_id>/clear", methods=["POST"])
+    return render_template("chat.html", doc=doc, conv=conv, history=history, conversations=conversations)
+
+@main.route("/chat/<int:doc_id>/new", methods=["POST"])
 @login_required
-def clear_chat(doc_id):
+def new_conversation(doc_id):
     doc = Document.query.filter_by(id=doc_id, user_id=current_user.id).first_or_404()
-    Message.query.filter_by(document_id=doc_id).delete()
+    conv = Conversation(title="Nova conversa", document_id=doc_id)
+    db.session.add(conv)
+    db.session.commit()
+    return redirect(url_for("main.chat_conversation", doc_id=doc_id, conv_id=conv.id))
+
+@main.route("/chat/<int:doc_id>/<int:conv_id>/delete", methods=["POST"])
+@login_required
+def delete_conversation(doc_id, conv_id):
+    doc  = Document.query.filter_by(id=doc_id, user_id=current_user.id).first_or_404()
+    conv = Conversation.query.filter_by(id=conv_id, document_id=doc_id).first_or_404()
+    db.session.delete(conv)
     db.session.commit()
     return redirect(url_for("main.chat", doc_id=doc_id))
 

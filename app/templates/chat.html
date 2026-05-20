@@ -1,55 +1,97 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="chat-container">
-  
-  <div class="chat-header">
-  <i class="ti ti-file-text"></i>
-  <span class="chat-filename">{{ doc.filename }}</span>
-  <span class="chat-badge">Pronto</span>
+<div class="chat-wrapper">
 
-  <form method="POST" action="{{ url_for('main.clear_chat', doc_id=doc.id) }}" style="margin-left: auto;">
-    <button type="submit" class="btn-clear-chat" title="Limpar conversa">
-      <i class="ti ti-trash"></i> Nova conversa
-    </button>
-  </form>
-</div>
-
-  <div class="chat-messages" id="chatMessages">
-    {% if not history %}
-    <div class="chat-empty">
-      <i class="ti ti-message-question"></i>
-      <p>Faça uma pergunta sobre o documento</p>
+  <!-- Sidebar de conversas -->
+  <div class="chat-sidebar">
+    <div class="sidebar-header">
+      <span>Conversas</span>
+      <form method="POST" action="{{ url_for('main.new_conversation', doc_id=doc.id) }}">
+        <button type="submit" class="btn-new-conv" title="Nova conversa">
+          <i class="ti ti-plus"></i>
+        </button>
+      </form>
     </div>
-    {% endif %}
 
-    {% for msg in history %}
-    <div class="chat-bubble user-bubble">
-      <p>{{ msg.question }}</p>
-    </div>
-    <div class="chat-bubble-wrapper">
-      <div class="chat-avatar">
-        <i class="ti ti-robot"></i>
+    <div class="sidebar-list">
+      {% for c in conversations %}
+      <div class="sidebar-item {% if c.id == conv.id %}active{% endif %}">
+        <a href="{{ url_for('main.chat_conversation', doc_id=doc.id, conv_id=c.id) }}" class="sidebar-link">
+          <i class="ti ti-message"></i>
+          <span class="sidebar-title">{{ c.title }}</span>
+        </a>
+        <form method="POST" action="{{ url_for('main.delete_conversation', doc_id=doc.id, conv_id=c.id) }}">
+          <button type="submit" class="btn-delete-conv" title="Deletar conversa">
+            <i class="ti ti-trash"></i>
+          </button>
+        </form>
       </div>
-      <div class="chat-bubble ai-bubble">
-        <p>{{ msg.answer }}</p>
-      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
 
-  <div class="chat-input-area">
-    <form method="POST">
-      <input type="text" name="question" placeholder="Digite sua pergunta..." autocomplete="off" required />
-      <button type="submit"><i class="ti ti-send"></i></button>
-    </form>
+  <!-- Área principal do chat -->
+  <div class="chat-container">
+
+    <div class="chat-header">
+      <i class="ti ti-file-text"></i>
+      <span class="chat-filename">{{ doc.filename }}</span>
+      <span class="chat-badge">Pronto</span>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+      {% if not history %}
+      <div class="chat-empty">
+        <i class="ti ti-message-question"></i>
+        <p>Faça uma pergunta sobre o documento</p>
+      </div>
+      {% else %}
+      <div class="chat-divider">início da conversa</div>
+      {% endif %}
+
+      {% for msg in history %}
+      <div class="chat-row user-row">
+        <div class="chat-bubble user-bubble">{{ msg.question }}</div>
+      </div>
+      <div class="chat-row ai-row">
+        <div class="chat-avatar">
+          <i class="ti ti-robot"></i>
+        </div>
+        <div class="chat-bubble ai-bubble">{{ msg.answer }}</div>
+      </div>
+      {% endfor %}
+
+      <div class="typing-indicator" id="typingIndicator" style="display: none;">
+        <div class="chat-avatar">
+          <i class="ti ti-robot"></i>
+        </div>
+        <div class="typing-bubble">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-counter" id="chatCounter">0 / 500</div>
+    <div class="chat-input-area">
+      <form method="POST" id="chatForm">
+        <input
+          type="text"
+          name="question"
+          id="questionInput"
+          placeholder="Digite sua pergunta..."
+          autocomplete="off"
+          maxlength="500"
+          required
+        />
+        <button type="submit" id="sendBtn">
+          <i class="ti ti-send"></i>
+        </button>
+      </form>
+    </div>
+
   </div>
-
 </div>
-
-<script>
-  // Scroll automático para o final das mensagens
-  const chatMessages = document.getElementById("chatMessages");
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-</script>
 {% endblock %}
