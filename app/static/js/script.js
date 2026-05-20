@@ -1,3 +1,49 @@
+// ── Toast Notifications ──
+function showToast(message, category) {
+  const container = document.getElementById('toast-container');
+
+  const icons = {
+    success: 'ti-circle-check',
+    error:   'ti-circle-x'
+  };
+
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${category}`;
+  toast.innerHTML = `
+    <i class="ti ${icons[category] || 'ti-info-circle'}" aria-hidden="true"></i>
+    <span class="toast-msg">${message}</span>
+    <button class="toast-close" aria-label="Fechar">
+      <i class="ti ti-x" aria-hidden="true"></i>
+    </button>
+  `;
+
+  container.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => toast.classList.add('show'));
+  });
+
+  toast.querySelector('.toast-close').addEventListener('click', () => closeToast(toast));
+  setTimeout(() => closeToast(toast), 4000);
+}
+
+function closeToast(toast) {
+  toast.classList.remove('show');
+  toast.classList.add('hide');
+  setTimeout(() => toast.remove(), 300);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const flashData = document.getElementById('flash-data');
+  if (!flashData) return;
+
+  flashData.querySelectorAll('span').forEach((el, i) => {
+    setTimeout(() => {
+      showToast(el.dataset.message, el.dataset.category);
+    }, i * 150);
+  });
+});
+
 // ── Upload ──
 const fileInput = document.getElementById("file");
 const fileName  = document.getElementById("fileName");
@@ -33,7 +79,7 @@ if (fileInput) {
       fileInput.files = dt.files;
       fileName.textContent = file.name;
     } else {
-      alert("Apenas arquivos PDF são permitidos.");
+      showToast("Apenas arquivos PDF são permitidos.", "error");
     }
   });
 }
@@ -47,19 +93,16 @@ if (chatForm) {
   const sendBtn         = document.getElementById("sendBtn");
   const chatCounter     = document.getElementById("chatCounter");
 
-  // Scroll para o final ao carregar
   setTimeout(() => {
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }, 150);
 
-  // Contador de caracteres
   questionInput.addEventListener("input", () => {
     const len = questionInput.value.length;
     chatCounter.textContent = `${len} / 500`;
     chatCounter.style.color = len > 450 ? "#ef4444" : "#6b7280";
   });
 
-  // Submit
   chatForm.addEventListener("submit", () => {
     const question = questionInput.value.trim();
     if (!question) return;
