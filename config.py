@@ -12,6 +12,5 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB máximo por arquivo
-
+    MAX_CONTENT_LENGTH = 150 * 1024 * 1024  # 150MB
     GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
