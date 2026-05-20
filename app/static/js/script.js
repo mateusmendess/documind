@@ -116,22 +116,43 @@ if (fileInput) {
 // ── Chat ──
 const chatForm = document.getElementById("chatForm");
 if (chatForm) {
-  const chatMessages    = document.getElementById("chatMessages");
-  const typingIndicator = document.getElementById("typingIndicator");
-  const questionInput   = document.getElementById("questionInput");
-  const sendBtn         = document.getElementById("sendBtn");
-  const chatCounter     = document.getElementById("chatCounter");
+  const chatMessages     = document.getElementById("chatMessages");
+  const typingIndicator  = document.getElementById("typingIndicator");
+  const questionInput    = document.getElementById("questionInput");
+  const sendBtn          = document.getElementById("sendBtn");
+  const chatCounter      = document.getElementById("chatCounter");
 
-  setTimeout(() => {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }, 150);
+  // Renderiza markdown simples nas bubbles da IA
+  function renderMarkdown(text) {
+    return text
+      .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/^#{1,3}\s(.+)/gm, '<strong>$1</strong>')
+      .replace(/^\s*[-*]\s(.+)/gm, '• $1')
+      .replace(/\n/g, '<br>');
+  }
 
+  // Aplica markdown em todas as bubbles já carregadas
+  document.querySelectorAll('.ai-bubble[data-raw]').forEach(bubble => {
+    bubble.innerHTML = renderMarkdown(bubble.dataset.raw);
+  });
+
+  // Scroll para o final
+  function scrollToBottom() {
+    chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+  }
+
+  setTimeout(scrollToBottom, 150);
+
+  // Contador de caracteres
   questionInput.addEventListener("input", () => {
     const len = questionInput.value.length;
     chatCounter.textContent = `${len} / 500`;
     chatCounter.style.color = len > 450 ? "#ef4444" : "#6b7280";
   });
 
+  // Submit
   chatForm.addEventListener("submit", () => {
     const question = questionInput.value.trim();
     if (!question) return;
@@ -142,12 +163,27 @@ if (chatForm) {
     chatMessages.insertBefore(userRow, typingIndicator);
 
     typingIndicator.style.display = "flex";
+    questionInput.disabled = true;
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="ti ti-loader"></i>';
 
-    setTimeout(() => {
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-      questionInput.disabled = true;
-      sendBtn.disabled = true;
-    }, 0);
+    setTimeout(scrollToBottom, 0);
+  });
+
+  // Botão copiar resposta
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-copy');
+    if (!btn) return;
+
+    const text = btn.dataset.text || btn.closest('.ai-bubble-wrap')?.querySelector('.ai-bubble')?.dataset.raw || '';
+    navigator.clipboard.writeText(text).then(() => {
+      btn.innerHTML = '<i class="ti ti-check"></i> Copiado!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = '<i class="ti ti-copy"></i> Copiar';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
   });
 }
 

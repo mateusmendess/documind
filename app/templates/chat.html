@@ -58,7 +58,14 @@
         <div class="chat-avatar">
           <i class="ti ti-robot"></i>
         </div>
-        <div class="chat-bubble ai-bubble">{{ msg.answer }}</div>
+        <div class="ai-bubble-wrap">
+          <div class="chat-bubble ai-bubble" data-raw="{{ msg.answer | e }}">{{ msg.answer }}</div>
+          <div class="ai-actions">
+            <button class="btn-copy" data-text="{{ msg.answer | e }}">
+              <i class="ti ti-copy"></i> Copiar
+            </button>
+          </div>
+        </div>
       </div>
       {% endfor %}
 
