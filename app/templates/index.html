@@ -19,17 +19,31 @@
         </p>
 
         <div class="home-buttons">
-            <a href="{{ url_for('main.register') }}" class="tf-btn-primary home-btn">
-                Começar Agora →
-            </a>
-            <a href="{{ url_for('main.login') }}" class="home-btn-sec">
-                Já tenho conta
-            </a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.dashboard') }}" class="tf-btn-primary home-btn">
+                    Ir para o dashboard →
+                </a>
+                <a href="{{ url_for('main.upload') }}" class="home-btn-sec">
+                    Enviar novo PDF
+                </a>
+            {% else %}
+                <a href="{{ url_for('main.register') }}" class="tf-btn-primary home-btn">
+                    Começar Agora →
+                </a>
+                <a href="{{ url_for('main.login') }}" class="home-btn-sec">
+                    Já tenho conta
+                </a>
+            {% endif %}
         </div>
 
         <div class="home-trust">
-            <span>✓ Gratuito para começar</span>
-            <span>✓ Sem cartão de crédito</span>
+            {% if current_user.is_authenticated %}
+                <span>✓ Bem-vindo, {{ current_user.name }}!</span>
+                <span>✓ Seus documentos estão salvos</span>
+            {% else %}
+                <span>✓ Gratuito para começar</span>
+                <span>✓ Sem cartão de crédito</span>
+            {% endif %}
         </div>
     </div>
 
