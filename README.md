@@ -66,9 +66,10 @@ Acesse o projeto online: [documind-ai.up.railway.app](https://documind-ai.up.rai
 | Deploy | Railway |
 
 ## 📁 Estrutura do projeto
+```text
 documind/
 ├── app/
-│   ├── init.py
+│   ├── __init__.py
 │   ├── extensions.py
 │   ├── models.py
 │   ├── routes.py
@@ -95,7 +96,7 @@ documind/
 ├── run.py
 ├── requirements.txt
 └── Procfile
-
+```
 ## ⚙️ Como rodar localmente
 
 ### Pré-requisitos
