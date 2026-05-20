@@ -10,5 +10,6 @@ pymupdf
 langchain
 langchain-groq
 langchain-community
+langchain-core
 chromadb
-python-dotenv
+sentence-transformers==2.7.0
