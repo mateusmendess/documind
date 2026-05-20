@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% block title %}Upload de PDF — DocuMind{% endblock %}
-
 {% block content %}
 <div class="upload-container">
   <div class="upload-card">
@@ -11,25 +9,35 @@
       <p>Faça upload de um PDF para começar a conversar com ele</p>
     </div>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="flash flash-{{ category }}">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+    <form method="POST" enctype="multipart/form-data" class="upload-form" id="uploadForm">
 
-    <form method="POST" enctype="multipart/form-data" class="upload-form">
       <div class="drop-area" id="dropArea">
         <div class="drop-icon">📄</div>
-        <p class="drop-text">Arraste seu PDF aqui</p>
-        <p class="drop-sub">ou</p>
+        <p class="drop-text" id="dropText">Arraste seu PDF aqui</p>
+        <p class="drop-sub" id="dropSub">ou</p>
         <label for="file" class="btn-select">Selecionar arquivo</label>
         <input type="file" id="file" name="file" accept=".pdf" hidden>
         <p class="file-name" id="fileName">Nenhum arquivo selecionado</p>
       </div>
 
-      <button type="submit" class="btn-upload">Enviar PDF</button>
+      <div class="progress-wrap" id="progressWrap" style="display:none">
+        <div class="progress-header">
+          <span class="progress-label">
+            <i class="ti ti-upload" aria-hidden="true"></i>
+            <span id="progressLabel">Enviando arquivo...</span>
+          </span>
+          <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <span class="progress-status" id="progressStatus">Aguarde...</span>
+      </div>
+
+      <button type="submit" class="btn-upload" id="uploadBtn">
+        <i class="ti ti-upload"></i> Enviar PDF
+      </button>
+
     </form>
 
     <a href="{{ url_for('main.dashboard') }}" class="back-link">← Voltar ao dashboard</a>

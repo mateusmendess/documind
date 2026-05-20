@@ -1329,3 +1329,50 @@ body {
 .btn-modal-confirm:hover {
     background: #3d1a1a;
 }
+
+/* ───── UPLOAD COM PROGRESSO ───── */
+.progress-wrap {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-label {
+    color: var(--dm-text-2);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.progress-pct {
+    color: var(--dm-primary);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.progress-bar-bg {
+    background: var(--dm-surface-2);
+    border-radius: 99px;
+    height: 6px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    background: var(--dm-primary);
+    height: 100%;
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.progress-status {
+    color: var(--dm-muted);
+    font-size: 12px;
+}

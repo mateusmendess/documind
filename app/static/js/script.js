@@ -150,3 +150,67 @@ if (chatForm) {
     }, 0);
   });
 }
+
+// ── Upload com progresso ──
+const uploadForm = document.getElementById('uploadForm');
+if (uploadForm) {
+  uploadForm.addEventListener('submit', (e) => {
+    const fileInput = document.getElementById('file');
+    if (!fileInput.files[0]) return;
+
+    e.preventDefault();
+
+    const progressWrap  = document.getElementById('progressWrap');
+    const progressFill  = document.getElementById('progressFill');
+    const progressPct   = document.getElementById('progressPct');
+    const progressLabel = document.getElementById('progressLabel');
+    const progressStatus = document.getElementById('progressStatus');
+    const uploadBtn     = document.getElementById('uploadBtn');
+    const dropArea      = document.getElementById('dropArea');
+
+    progressWrap.style.display = 'flex';
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = '<i class="ti ti-loader"></i> Enviando...';
+    dropArea.style.pointerEvents = 'none';
+    dropArea.style.opacity = '0.6';
+
+    const formData = new FormData(uploadForm);
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener('progress', (e) => {
+      if (!e.lengthComputable) return;
+      const pct = Math.round((e.loaded / e.total) * 100);
+      progressFill.style.width = pct + '%';
+      progressPct.textContent  = pct + '%';
+
+      if (pct < 100) {
+        progressLabel.textContent  = 'Enviando arquivo...';
+        progressStatus.textContent = `${(e.loaded / 1024 / 1024).toFixed(1)} MB de ${(e.total / 1024 / 1024).toFixed(1)} MB`;
+      } else {
+        progressLabel.textContent  = 'Indexando documento com IA...';
+        progressStatus.textContent = 'Isso pode levar alguns segundos...';
+        uploadBtn.innerHTML = '<i class="ti ti-brain"></i> Indexando...';
+      }
+    });
+
+    xhr.addEventListener('load', () => {
+      if (xhr.responseURL) {
+        window.location.href = xhr.responseURL;
+      } else {
+        window.location.href = '/dashboard';
+      }
+    });
+
+    xhr.addEventListener('error', () => {
+      showToast('Erro ao enviar o arquivo. Tente novamente.', 'error');
+      uploadBtn.disabled = false;
+      uploadBtn.innerHTML = '<i class="ti ti-upload"></i> Enviar PDF';
+      progressWrap.style.display = 'none';
+      dropArea.style.pointerEvents = 'auto';
+      dropArea.style.opacity = '1';
+    });
+
+    xhr.open('POST', uploadForm.action || window.location.href);
+    xhr.send(formData);
+  });
+}
