@@ -661,7 +661,7 @@ body {
     gap: 10px;
     padding: 16px 20px;
     border-bottom: 1px solid var(--dm-border-2);
-    background: var(--dm-bg);
+    background: var(--dm-surface);
     flex-shrink: 0;
 }
 
@@ -1367,3 +1367,4 @@ body {
 }
 
 .btn-error-back:hover { border-color: var(--dm-text-2); }
+
