@@ -2,7 +2,7 @@ import os
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
-from .models import User, Document
+from .models import User, Document, Message
 from .extensions import db, bcrypt
 from .pdf_service import extract_text_from_pdf
 from .ai_service import ask_question
@@ -95,15 +95,28 @@ def upload():
 @login_required
 def chat(doc_id):
     doc = Document.query.filter_by(id=doc_id, user_id=current_user.id).first_or_404()
-    question = None
-    answer = None
+    
+    # Busca histórico ordenado por data
+    history = Message.query.filter_by(document_id=doc_id).order_by(Message.created_at.asc()).all()
+    
     if request.method == "POST":
         question = request.form.get("question")
         if question:
-            # ← RAG: busca apenas os chunks relevantes em vez do texto inteiro
             context = search_chunks(doc.id, question)
-            answer = ask_question(context, question)
-    return render_template("chat.html", doc=doc, question=question, answer=answer)
+            answer = ask_question(context, question, history)
+            
+            # Salva a nova mensagem no banco
+            new_message = Message(
+                question=question,
+                answer=answer,
+                document_id=doc_id
+            )
+            db.session.add(new_message)
+            db.session.commit()
+            
+            return redirect(url_for("main.chat", doc_id=doc_id))
+    
+    return render_template("chat.html", doc=doc, history=history)
 
 @main.route("/logout")
 @login_required

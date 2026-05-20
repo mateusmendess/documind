@@ -10,26 +10,26 @@
   </div>
 
   <div class="chat-messages" id="chatMessages">
-    {% if not messages %}
+    {% if not history %}
     <div class="chat-empty">
       <i class="ti ti-message-question"></i>
       <p>Faça uma pergunta sobre o documento</p>
     </div>
     {% endif %}
 
-    {% if question and answer %}
-  <div class="chat-bubble user-bubble">
-    <p>{{ question }}</p>
-  </div>
-  <div class="chat-bubble-wrapper">
-    <div class="chat-avatar">
-      <i class="ti ti-robot"></i>
+    {% for msg in history %}
+    <div class="chat-bubble user-bubble">
+      <p>{{ msg.question }}</p>
     </div>
-    <div class="chat-bubble ai-bubble">
-      <p>{{ answer }}</p>
+    <div class="chat-bubble-wrapper">
+      <div class="chat-avatar">
+        <i class="ti ti-robot"></i>
+      </div>
+      <div class="chat-bubble ai-bubble">
+        <p>{{ msg.answer }}</p>
+      </div>
     </div>
-  </div>
-{% endif %}
+    {% endfor %}
   </div>
 
   <div class="chat-input-area">
@@ -40,4 +40,10 @@
   </div>
 
 </div>
+
+<script>
+  // Scroll automático para o final das mensagens
+  const chatMessages = document.getElementById("chatMessages");
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+</script>
 {% endblock %}

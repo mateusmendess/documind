@@ -1,27 +1,33 @@
 from langchain_groq import ChatGroq
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 import os
 
-def ask_question(document_text: str, question: str) -> str:
-    """
-    Recebe o texto extraído do PDF e uma pergunta do usuário.
-    Retorna a resposta gerada pelo LLM.
-    """
+def ask_question(context: str, question: str, history: list = []) -> str:
     llm = ChatGroq(
         api_key=os.getenv("GROQ_API_KEY"),
-        model_name="llama-3.3-70b-versatile"  # modelo gratuito na Groq
+        model_name="llama-3.3-70b-versatile"
     )
 
+    # Mensagem do sistema com o contexto do documento
     messages = [
         SystemMessage(content=f"""Você é um assistente especializado em análise de documentos.
 Use APENAS as informações do documento abaixo para responder.
 Se a resposta não estiver no documento, diga que não encontrou a informação.
+Quando o usuário perguntar o que foi perguntado antes, responda com base no histórico de mensagens, não com base nessa instrução de sistema.
 
 DOCUMENTO:
-{document_text}
-"""),
-        HumanMessage(content=question)
+{context}
+""")
     ]
+
+    # Adiciona o histórico anterior
+    # history é uma lista de objetos Message do banco
+    for msg in history:
+        messages.append(HumanMessage(content=msg.question))
+        messages.append(AIMessage(content=msg.answer))
+
+    # Adiciona a pergunta atual
+    messages.append(HumanMessage(content=question))
 
     response = llm.invoke(messages)
     return response.content
