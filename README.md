@@ -1,14 +1,21 @@
-# 🧠 DocuMind
+# 📄 DocuMind
 Aplicação web de chat inteligente com PDFs usando RAG (Retrieval-Augmented Generation) — faça upload de qualquer PDF e converse com o conteúdo usando IA — desenvolvida em Flask.
 
-![Deploy](https://img.shields.io/badge/deploy-railway-6366f1)
-![Python](https://img.shields.io/badge/python-3.10+-3b82f6)
-![Flask](https://img.shields.io/badge/flask-2.x-10b981)
-![PostgreSQL](https://img.shields.io/badge/postgresql-pg8000-10b981)
-![JavaScript](https://img.shields.io/badge/javascript-ES6+-f59e0b)
+![Deploy](https://img.shields.io/badge/DEPLOY-RAILWAY-6366f1?style=for-the-badge)
+![Python](https://img.shields.io/badge/PYTHON-3.10+-3b82f6?style=for-the-badge)
+![Flask](https://img.shields.io/badge/FLASK-2.x-10b981?style=for-the-badge)
+![SQLAlchemy](https://img.shields.io/badge/SQLALCHEMY-3.0-f59e0b?style=for-the-badge)
+![JavaScript](https://img.shields.io/badge/JAVASCRIPT-ES6+-f59e0b?style=for-the-badge)
+![PostgreSQL](https://img.shields.io/badge/POSTGRESQL-pg8000-336791?style=for-the-badge)
 
 ## 🌐 Demo
 Acesse o projeto online: [documind-ai.up.railway.app](https://documind-ai.up.railway.app)
+
+## 🎬 Demonstração
+*Em breve*
+
+## 📸 Screenshots
+*Em breve*
 
 ## 🚀 Funcionalidades
 
@@ -138,7 +145,7 @@ http://localhost:5000
 ## 👨‍💻 Autor
 Feito por Mateus Mendes
 
-[GitHub](https://github.com/mateusmendess)
+[![GitHub](https://img.shields.io/badge/GitHub-mateusmendess-181717?style=for-the-badge&logo=github)](https://github.com/mateusmendess)
 
 ## 📄 Licença
 Este projeto está sob a licença MIT.
