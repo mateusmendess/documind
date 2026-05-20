@@ -106,12 +106,16 @@ def chat_conversation(doc_id, conv_id):
     doc  = Document.query.filter_by(id=doc_id, user_id=current_user.id).first_or_404()
     conv = Conversation.query.filter_by(id=conv_id, document_id=doc_id).first_or_404()
     history = Message.query.filter_by(conversation_id=conv_id).order_by(Message.created_at.asc()).all()
-    conversations = Conversation.query.filter_by(document_id=doc_id).order_by(Conversation.created_at.desc()).all()
+    conversations = Conversation.query.join(Document).filter(
+        Conversation.document_id == doc_id,
+        Document.user_id == current_user.id
+    ).order_by(Conversation.created_at.desc()).all()
 
     if request.method == "POST":
         question = request.form.get("question")
+        print(f"DEBUG question: '{question}'")
+        print(f"DEBUG form data: {request.form}")
         if question:
-            # Gera título automático a partir da primeira pergunta
             if not history:
                 conv.title = question[:60] + ("..." if len(question) > 60 else "")
                 db.session.commit()

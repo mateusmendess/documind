@@ -116,13 +116,12 @@ if (fileInput) {
 // ── Chat ──
 const chatForm = document.getElementById("chatForm");
 if (chatForm) {
-  const chatMessages     = document.getElementById("chatMessages");
-  const typingIndicator  = document.getElementById("typingIndicator");
-  const questionInput    = document.getElementById("questionInput");
-  const sendBtn          = document.getElementById("sendBtn");
-  const chatCounter      = document.getElementById("chatCounter");
+  const chatMessages    = document.getElementById("chatMessages");
+  const typingIndicator = document.getElementById("typingIndicator");
+  const questionInput   = document.getElementById("questionInput");
+  const sendBtn         = document.getElementById("sendBtn");
+  const chatCounter     = document.getElementById("chatCounter");
 
-  // Renderiza markdown simples nas bubbles da IA
   function renderMarkdown(text) {
     return text
       .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
@@ -133,29 +132,28 @@ if (chatForm) {
       .replace(/\n/g, '<br>');
   }
 
-  // Aplica markdown em todas as bubbles já carregadas
   document.querySelectorAll('.ai-bubble[data-raw]').forEach(bubble => {
     bubble.innerHTML = renderMarkdown(bubble.dataset.raw);
   });
 
-  // Scroll para o final
   function scrollToBottom() {
     chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
   }
 
   setTimeout(scrollToBottom, 150);
 
-  // Contador de caracteres
   questionInput.addEventListener("input", () => {
     const len = questionInput.value.length;
     chatCounter.textContent = `${len} / 500`;
     chatCounter.style.color = len > 450 ? "#ef4444" : "#6b7280";
   });
 
-  // Submit
-  chatForm.addEventListener("submit", () => {
+  chatForm.addEventListener("submit", (e) => {
     const question = questionInput.value.trim();
-    if (!question) return;
+    if (!question) {
+      e.preventDefault();
+      return;
+    }
 
     const userRow = document.createElement("div");
     userRow.className = "chat-row user-row";
@@ -163,19 +161,22 @@ if (chatForm) {
     chatMessages.insertBefore(userRow, typingIndicator);
 
     typingIndicator.style.display = "flex";
-    questionInput.disabled = true;
+    questionInput.readOnly = true;
+    questionInput.style.opacity = '0.5';
     sendBtn.disabled = true;
     sendBtn.innerHTML = '<i class="ti ti-loader"></i>';
 
     setTimeout(scrollToBottom, 0);
   });
 
-  // Botão copiar resposta
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.btn-copy');
     if (!btn) return;
 
-    const text = btn.dataset.text || btn.closest('.ai-bubble-wrap')?.querySelector('.ai-bubble')?.dataset.raw || '';
+    const text = btn.dataset.text
+      || btn.closest('.ai-bubble-wrap')?.querySelector('.ai-bubble')?.dataset.raw
+      || '';
+
     navigator.clipboard.writeText(text).then(() => {
       btn.innerHTML = '<i class="ti ti-check"></i> Copiado!';
       btn.classList.add('copied');
@@ -196,13 +197,13 @@ if (uploadForm) {
 
     e.preventDefault();
 
-    const progressWrap  = document.getElementById('progressWrap');
-    const progressFill  = document.getElementById('progressFill');
-    const progressPct   = document.getElementById('progressPct');
-    const progressLabel = document.getElementById('progressLabel');
+    const progressWrap   = document.getElementById('progressWrap');
+    const progressFill   = document.getElementById('progressFill');
+    const progressPct    = document.getElementById('progressPct');
+    const progressLabel  = document.getElementById('progressLabel');
     const progressStatus = document.getElementById('progressStatus');
-    const uploadBtn     = document.getElementById('uploadBtn');
-    const dropArea      = document.getElementById('dropArea');
+    const uploadBtn      = document.getElementById('uploadBtn');
+    const dropArea       = document.getElementById('dropArea');
 
     progressWrap.style.display = 'flex';
     uploadBtn.disabled = true;

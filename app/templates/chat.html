@@ -3,7 +3,6 @@
 {% block content %}
 <div class="chat-wrapper">
 
-  <!-- Sidebar de conversas -->
   <div class="chat-sidebar">
     <div class="sidebar-header">
       <span>Conversas</span>
@@ -31,7 +30,6 @@
     </div>
   </div>
 
-  <!-- Área principal do chat -->
   <div class="chat-container">
 
     <div class="chat-header">
@@ -83,7 +81,7 @@
 
     <div class="chat-counter" id="chatCounter">0 / 500</div>
     <div class="chat-input-area">
-      <form method="POST" id="chatForm">
+      <form method="POST" id="chatForm" action="{{ url_for('main.chat_conversation', doc_id=doc.id, conv_id=conv.id) }}">
         <input
           type="text"
           name="question"
