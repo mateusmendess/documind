@@ -1426,3 +1426,80 @@ body {
     color: var(--dm-primary);
     border-color: var(--dm-primary);
 }
+
+/* ───── PÁGINAS DE ERRO ───── */
+.error-page {
+    min-height: calc(100vh - 64px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.error-card {
+    background: var(--dm-surface);
+    border: 1px solid var(--dm-border-2);
+    border-radius: 16px;
+    padding: 48px 40px;
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+}
+
+.error-code {
+    font-size: 80px;
+    font-weight: 700;
+    color: var(--dm-primary);
+    line-height: 1;
+    margin-bottom: 8px;
+    opacity: 0.15;
+}
+
+.error-icon {
+    margin-top: -48px;
+    margin-bottom: 16px;
+}
+
+.error-icon i {
+    font-size: 48px;
+    color: var(--dm-primary);
+}
+
+.error-title {
+    color: var(--dm-text);
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0 0 10px;
+}
+
+.error-sub {
+    color: var(--dm-muted);
+    font-size: 14px;
+    margin: 0 0 28px;
+    line-height: 1.6;
+}
+
+.error-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-error-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: var(--dm-text-2);
+    border: 1px solid var(--dm-border-2);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: border-color 0.2s;
+}
+
+.btn-error-back:hover {
+    border-color: var(--dm-text-2);
+}
