@@ -7,6 +7,7 @@ from .extensions import db, bcrypt
 from .pdf_service import extract_text_from_pdf
 from .ai_service import ask_question
 from .rag_service import index_document, search_chunks
+from flask import jsonify
 
 main = Blueprint("main", __name__)
 ALLOWED_EXTENSIONS = {"pdf"}
@@ -132,6 +133,39 @@ def chat_conversation(doc_id, conv_id):
 
     return render_template("chat.html", doc=doc, conv=conv, history=history, conversations=conversations)
 
+@main.route("/chat/<int:doc_id>/<int:conv_id>/message", methods=["POST"])
+@login_required
+def send_message(doc_id, conv_id):
+    doc  = Document.query.filter_by(id=doc_id, user_id=current_user.id).first_or_404()
+    conv = Conversation.query.filter_by(id=conv_id, document_id=doc_id).first_or_404()
+    history = Message.query.filter_by(conversation_id=conv_id).order_by(Message.created_at.asc()).all()
+
+    data = request.get_json()
+    question = data.get("question", "").strip()
+
+    if not question:
+        return jsonify({"error": "Pergunta vazia"}), 400
+
+    if not history:
+        conv.title = question[:60] + ("..." if len(question) > 60 else "")
+        db.session.commit()
+
+    context = search_chunks(doc.id, question)
+    answer  = ask_question(context, question, history)
+
+    new_message = Message(
+        question=question,
+        answer=answer,
+        conversation_id=conv_id
+    )
+    db.session.add(new_message)
+    db.session.commit()
+
+    return jsonify({
+        "answer": answer,
+        "conv_title": conv.title
+    })
+
 @main.route("/chat/<int:doc_id>/new", methods=["POST"])
 @login_required
 def new_conversation(doc_id):
@@ -149,6 +183,17 @@ def delete_conversation(doc_id, conv_id):
     db.session.delete(conv)
     db.session.commit()
     return redirect(url_for("main.chat", doc_id=doc_id))
+
+@main.route("/chat/<int:doc_id>/<int:conv_id>/rename", methods=["POST"])
+@login_required
+def rename_conversation(doc_id, conv_id):
+    doc  = Document.query.filter_by(id=doc_id, user_id=current_user.id).first_or_404()
+    conv = Conversation.query.filter_by(id=conv_id, document_id=doc_id).first_or_404()
+    new_title = request.form.get("title", "").strip()
+    if new_title:
+        conv.title = new_title[:60] + ("..." if len(new_title) > 60 else "")
+        db.session.commit()
+    return redirect(url_for("main.chat_conversation", doc_id=doc_id, conv_id=conv_id))
 
 @main.route("/document/<int:doc_id>/delete", methods=["POST"])
 @login_required

@@ -849,7 +849,8 @@ body {
     flex-shrink: 0;
 }
 
-.chat-input-area form {
+.chat-input-area form,
+.chat-input-area #chatForm {
     display: flex;
     gap: 8px;
     align-items: center;
@@ -892,7 +893,6 @@ body {
     color: #0d2e22;
     font-size: 16px;
 }
-
 /* ── Chat com sidebar ── */
 .chat-wrapper {
     display: flex;
@@ -1368,3 +1368,114 @@ body {
 
 .btn-error-back:hover { border-color: var(--dm-text-2); }
 
+.navbar {
+    position: relative;
+}
+
+/* ───── RENOMEAR CONVERSA ───── */
+.sidebar-view {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+}
+
+.sidebar-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+}
+
+.sidebar-item:hover .sidebar-actions {
+    opacity: 1;
+}
+
+.sidebar-item.active .sidebar-actions {
+    opacity: 1;
+}
+
+.btn-rename-conv {
+    background: transparent;
+    border: none;
+    color: var(--dm-muted);
+    padding: 4px 5px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    display: flex;
+    align-items: center;
+}
+
+.btn-rename-conv:hover {
+    color: var(--dm-text);
+    background: var(--dm-border-2);
+}
+
+.sidebar-edit {
+    padding: 6px 8px;
+    width: 100%;
+}
+
+.edit-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.edit-row > i {
+    color: var(--dm-primary);
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.edit-input {
+    flex: 1;
+    background: var(--dm-surface-2);
+    border: 1px solid var(--dm-primary);
+    border-radius: 6px;
+    padding: 5px 8px;
+    color: var(--dm-text);
+    font-size: 12px;
+    outline: none;
+    min-width: 0;
+    font-family: inherit;
+}
+
+.btn-edit-save {
+    background: var(--dm-primary);
+    border: none;
+    border-radius: 5px;
+    color: #0d2e22;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.btn-edit-cancel {
+    background: transparent;
+    border: 1px solid var(--dm-border-2);
+    border-radius: 5px;
+    color: var(--dm-muted);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.btn-edit-cancel:hover {
+    color: var(--dm-text);
+    border-color: var(--dm-text-2);
+}

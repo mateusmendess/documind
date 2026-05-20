@@ -15,16 +15,38 @@
 
     <div class="sidebar-list">
       {% for c in conversations %}
-      <div class="sidebar-item {% if c.id == conv.id %}active{% endif %}">
-        <a href="{{ url_for('main.chat_conversation', doc_id=doc.id, conv_id=c.id) }}" class="sidebar-link">
-          <i class="ti ti-message"></i>
-          <span class="sidebar-title">{{ c.title }}</span>
-        </a>
-        <form method="POST" action="{{ url_for('main.delete_conversation', doc_id=doc.id, conv_id=c.id) }}">
-          <button type="submit" class="btn-delete-conv" title="Deletar conversa">
-            <i class="ti ti-trash"></i>
-          </button>
-        </form>
+      <div class="sidebar-item {% if c.id == conv.id %}active{% endif %}"
+           data-conv-id="{{ c.id }}"
+           data-conv-title="{{ c.title }}">
+
+        <div class="sidebar-view">
+          <a href="{{ url_for('main.chat_conversation', doc_id=doc.id, conv_id=c.id) }}" class="sidebar-link">
+            <i class="ti ti-message"></i>
+            <span class="sidebar-title">{{ c.title }}</span>
+          </a>
+          <div class="sidebar-actions">
+            <button class="btn-rename-conv" title="Renomear">
+              <i class="ti ti-pencil"></i>
+            </button>
+            <form method="POST" action="{{ url_for('main.delete_conversation', doc_id=doc.id, conv_id=c.id) }}">
+              <button type="submit" class="btn-delete-conv" title="Deletar conversa">
+                <i class="ti ti-trash"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="sidebar-edit" style="display:none">
+          <form method="POST" action="{{ url_for('main.rename_conversation', doc_id=doc.id, conv_id=c.id) }}">
+            <div class="edit-row">
+              <i class="ti ti-message" aria-hidden="true"></i>
+              <input type="text" name="title" class="edit-input" value="{{ c.title }}" maxlength="60" />
+              <button type="submit" class="btn-edit-save"><i class="ti ti-check"></i></button>
+              <button type="button" class="btn-edit-cancel"><i class="ti ti-x"></i></button>
+            </div>
+          </form>
+        </div>
+
       </div>
       {% endfor %}
     </div>
@@ -40,7 +62,7 @@
 
     <div class="chat-messages" id="chatMessages">
       {% if not history %}
-      <div class="chat-empty">
+      <div class="chat-empty" id="chatEmpty">
         <i class="ti ti-message-question"></i>
         <p>Faça uma pergunta sobre o documento</p>
       </div>
@@ -81,20 +103,18 @@
 
     <div class="chat-counter" id="chatCounter">0 / 500</div>
     <div class="chat-input-area">
-      <form method="POST" id="chatForm" action="{{ url_for('main.chat_conversation', doc_id=doc.id, conv_id=conv.id) }}">
+      <div id="chatForm">
         <input
           type="text"
-          name="question"
           id="questionInput"
           placeholder="Digite sua pergunta..."
           autocomplete="off"
           maxlength="500"
-          required
         />
-        <button type="submit" id="sendBtn">
+        <button type="button" id="sendBtn">
           <i class="ti ti-send"></i>
         </button>
-      </form>
+      </div>
     </div>
 
   </div>

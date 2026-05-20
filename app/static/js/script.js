@@ -122,6 +122,10 @@ if (chatForm) {
   const sendBtn         = document.getElementById("sendBtn");
   const chatCounter     = document.getElementById("chatCounter");
 
+  const pathParts = window.location.pathname.split('/');
+  const docId  = pathParts[2];
+  const convId = pathParts[3];
+
   function renderMarkdown(text) {
     return text
       .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
@@ -148,25 +152,93 @@ if (chatForm) {
     chatCounter.style.color = len > 450 ? "#ef4444" : "#6b7280";
   });
 
-  chatForm.addEventListener("submit", (e) => {
+  async function sendMessage() {
     const question = questionInput.value.trim();
-    if (!question) {
-      e.preventDefault();
-      return;
-    }
+    if (!question) return;
 
+    // Remove empty state se existir
+    const chatEmpty = document.getElementById('chatEmpty');
+    if (chatEmpty) chatEmpty.remove();
+
+    // Adiciona bubble do usuário
     const userRow = document.createElement("div");
     userRow.className = "chat-row user-row";
     userRow.innerHTML = `<div class="chat-bubble user-bubble">${question}</div>`;
     chatMessages.insertBefore(userRow, typingIndicator);
 
     typingIndicator.style.display = "flex";
+    questionInput.value = '';
     questionInput.readOnly = true;
     questionInput.style.opacity = '0.5';
     sendBtn.disabled = true;
     sendBtn.innerHTML = '<i class="ti ti-loader"></i>';
+    chatCounter.textContent = '0 / 500';
 
-    setTimeout(scrollToBottom, 0);
+    scrollToBottom();
+
+    try {
+      const response = await fetch(`/chat/${docId}/${convId}/message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question })
+      });
+
+      const data = await response.json();
+
+      typingIndicator.style.display = "none";
+
+      // Adiciona bubble da IA
+      const aiRow = document.createElement("div");
+      aiRow.className = "chat-row ai-row";
+      const escapedAnswer = data.answer.replace(/"/g, '&quot;');
+      aiRow.innerHTML = `
+        <div class="chat-avatar"><i class="ti ti-robot"></i></div>
+        <div class="ai-bubble-wrap">
+          <div class="chat-bubble ai-bubble" data-raw="${escapedAnswer}"></div>
+          <div class="ai-actions">
+            <button class="btn-copy" data-text="${escapedAnswer}">
+              <i class="ti ti-copy"></i> Copiar
+            </button>
+          </div>
+        </div>
+      `;
+      chatMessages.insertBefore(aiRow, typingIndicator);
+
+      // Aplica markdown
+      const newBubble = aiRow.querySelector('.ai-bubble');
+      newBubble.innerHTML = renderMarkdown(data.answer);
+
+      // Atualiza título na sidebar
+      if (data.conv_title) {
+        const activeItem = document.querySelector('.sidebar-item.active');
+        if (activeItem) {
+          const titleEl = activeItem.querySelector('.sidebar-title');
+          if (titleEl) titleEl.textContent = data.conv_title;
+          activeItem.dataset.convTitle = data.conv_title;
+        }
+      }
+
+      scrollToBottom();
+
+    } catch (err) {
+      typingIndicator.style.display = "none";
+      showToast('Erro ao enviar mensagem. Tente novamente.', 'error');
+    } finally {
+      questionInput.readOnly = false;
+      questionInput.style.opacity = '1';
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = '<i class="ti ti-send"></i>';
+      questionInput.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+
+  questionInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
   });
 
   document.addEventListener('click', (e) => {
@@ -251,3 +323,44 @@ if (uploadForm) {
     xhr.send(formData);
   });
 }
+
+// ── Renomear conversa inline ──
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.btn-rename-conv').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item  = btn.closest('.sidebar-item');
+      const view  = item.querySelector('.sidebar-view');
+      const edit  = item.querySelector('.sidebar-edit');
+      const input = item.querySelector('.edit-input');
+
+      view.style.display = 'none';
+      edit.style.display = 'block';
+      input.focus();
+      input.select();
+    });
+  });
+
+  document.querySelectorAll('.btn-edit-cancel').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item  = btn.closest('.sidebar-item');
+      const view  = item.querySelector('.sidebar-view');
+      const edit  = item.querySelector('.sidebar-edit');
+      const input = item.querySelector('.edit-input');
+
+      input.value = item.dataset.convTitle;
+      edit.style.display = 'none';
+      view.style.display = 'flex';
+    });
+  });
+
+  document.querySelectorAll('.sidebar-edit input').forEach(input => {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const item = input.closest('.sidebar-item');
+        input.value = item.dataset.convTitle;
+        item.querySelector('.sidebar-edit').style.display = 'none';
+        item.querySelector('.sidebar-view').style.display = 'flex';
+      }
+    });
+  });
+});
