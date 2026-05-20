@@ -1479,3 +1479,21 @@ body {
     color: var(--dm-text);
     border-color: var(--dm-text-2);
 }
+
+.btn-back-dashboard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    color: var(--dm-muted);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-back-dashboard:hover {
+    background: var(--dm-surface-2);
+    color: var(--dm-text);
+}

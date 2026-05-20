@@ -55,6 +55,9 @@
   <div class="chat-container">
 
     <div class="chat-header">
+      <a href="{{ url_for('main.dashboard') }}" class="btn-back-dashboard" title="Voltar ao dashboard">
+        <i class="ti ti-arrow-left"></i>
+      </a>
       <i class="ti ti-file-text"></i>
       <span class="chat-filename">{{ doc.filename }}</span>
       <span class="chat-badge">Pronto</span>
