@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from config import Config
 from .extensions import db, bcrypt, login_manager
@@ -16,5 +17,6 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+        os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
     return app
