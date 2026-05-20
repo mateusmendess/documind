@@ -118,6 +118,14 @@ def chat(doc_id):
     
     return render_template("chat.html", doc=doc, history=history)
 
+@main.route("/chat/<int:doc_id>/clear", methods=["POST"])
+@login_required
+def clear_chat(doc_id):
+    doc = Document.query.filter_by(id=doc_id, user_id=current_user.id).first_or_404()
+    Message.query.filter_by(document_id=doc_id).delete()
+    db.session.commit()
+    return redirect(url_for("main.chat", doc_id=doc_id))
+
 @main.route("/logout")
 @login_required
 def logout():

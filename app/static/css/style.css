@@ -812,3 +812,22 @@ body {
 .chat-input-area button:hover {
   background: var(--dm-primary-d);
 }
+
+.btn-clear-chat {
+    background: transparent;
+    border: 1px solid var(--dm-border-2);
+    color: var(--dm-muted);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+
+.btn-clear-chat:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+}
