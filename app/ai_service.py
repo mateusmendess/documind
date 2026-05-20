@@ -2,13 +2,15 @@ from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 import os
 
-def ask_question(context: str, question: str, history: list = []) -> str:
+def ask_question(context: str, question: str, history: list = None) -> str:
+    if history is None:
+        history = []
+
     llm = ChatGroq(
         api_key=os.getenv("GROQ_API_KEY"),
         model_name="llama-3.3-70b-versatile"
     )
 
-    # Mensagem do sistema com o contexto do documento
     messages = [
         SystemMessage(content=f"""Você é um assistente especializado em análise de documentos.
 Use APENAS as informações do documento abaixo para responder.
@@ -20,13 +22,10 @@ DOCUMENTO:
 """)
     ]
 
-    # Adiciona o histórico anterior
-    # history é uma lista de objetos Message do banco
     for msg in history:
         messages.append(HumanMessage(content=msg.question))
         messages.append(AIMessage(content=msg.answer))
 
-    # Adiciona a pergunta atual
     messages.append(HumanMessage(content=question))
 
     response = llm.invoke(messages)
