@@ -12,4 +12,7 @@ def extract_text_from_pdf(filepath: str) -> str:
         for page in pdf:                        # itera cada página
             text += page.get_text()             # extrai o texto da página
 
+    # Remove caracteres nulos que o PostgreSQL não aceita
+    text = text.replace('\x00', '')
+
     return text.strip()
